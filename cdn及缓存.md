@@ -131,6 +131,10 @@
         未过期：返回304 读取本地缓存
 
 
+    3、浏览器缓存优先级
+        Cache-Control 中有 max-age
+        Expires   
+        Etag  (Cache-Control: no-cache)
 <!-- https://www.jianshu.com/p/baf12d367fe7 -->
 
 
