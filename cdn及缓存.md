@@ -133,7 +133,7 @@
 
     3、浏览器缓存优先级
         Cache-Control 中有 max-age
-        Expires   
+        Expires (因为max-age 会被忽略)
         Etag  (Cache-Control: no-cache)
 <!-- https://www.jianshu.com/p/baf12d367fe7 -->
 
