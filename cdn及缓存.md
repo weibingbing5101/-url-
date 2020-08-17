@@ -47,82 +47,130 @@
 
 
 三、缓存--浏览器缓存
+
+    策略
     
-    1 策略
+        1 强缓存
 
-        Etag
-            是一个哈希字符串
-            服务器在响应中返回 Etag，浏览器在后续请求中携带此参数，如果服务器Etag和浏览器Etag一致，则304使用缓存
+            Expires 
 
-            使用范围：
-                Expires 过期
-                Cache-Control：no-cache 
+                指定资源到期时间(服务器端的具体时间)， 修改本地时间，造成缓存失效
 
-                优先级较低
+            Cache-control  
 
+                public：所有内容都将被缓存(客户端、代理服务器-cdn)
 
+                private：内容只缓存到客户端，不缓存到代理服务器
 
+                no-cache：配合Etag Last-modified 使用。(此设置只是cache-control 这一项不起作用，但是协商缓存还是会起作用)
 
-        Cache-Control
+                no-store：所有内容不被缓存
 
-            public：所有内容都将被缓存(客户端、代理服务器-cdn)
+                max-age=xx：缓存内容奖在xxx秒后失效
 
-            private：内容只缓存到客户端，不缓存到代理服务器
-
-            no-cache：配合Etag使用
-
-            no-store：所有内容不被缓存
-
-            must-revalidation/proxy-revalidation：如果缓存内容失效，请求必须发送到服务器或代理服务器进行重新验证
-
-            max-age=xx：缓存内容奖在xxx秒后失效
-
-            例：
-                Cache-Control: max-age=691200，可以在客户端存储 8 天
+                例：
+                    Cache-Control: max-age=691200，可以在客户端存储 8 天
 
 
+            以上两个对比
 
-        Expires
+                Expires     http 1.0 产物
 
-            响应头标记数据的过期时间，超过后，缓存会被定义为过期
-
-            Expires: Sat, 27 Apr 2019 11:43:15 GMT
-            数据会在 2019 年 4 月 27 号的 11 点 43 分后过期
-
-            ** Cache-Control 中有 max-age 指令，浏览器会忽略此参数
+                Cache-control   http 1.1 产物  权重高于Expires
 
 
-        Last-Modified
-            服务器配置响应头此数据，告诉浏览器这条数据上次的修改时间的标签
-            后续请求，浏览器携带此数据，和服务器做对比，判断是否更新数据
+        2 协商缓存
 
-            根据最后修改时间判断是否使用缓存
+            Last-Modified / If-Modified-Since
+
+                秒为单位记时， 如果1秒内修改多次，不会命中缓存
+
+                第一次请求资源，相应头会带有Last-Modified数据，
+                然后第二次请求的时候会把 Last-Modified 数据转为 If-Modified-Since 和服务器资源修改时间判断
+
+
+            ETag / If-None-Match
+
+                原理类似上面的
+
+                第一次请求资源，相应头会带有 ETag 数据，
+                然后第二次请求的时候会把 ETag 数据转为 If-None-Match 和服务器资源修改时间判断
+
+
+            以上两个对比
+
+                ETag 权重高于 Last-Modified
+
+                ETag 精确度高于 Last-Modified
+
+                ETag 性能差于 Last-Modified (ETag 要计算生成)
+
+
+    缓存机制
+
+        先进行强制缓存，如果生效，直接读取缓存资源，失效进行协商缓存处理。
+
+        协商缓存失效，200ok ，重新返回资源及缓存标识
+
+        协商缓存生效，304，继续使用缓存
 
 
 
-    2 不足
-         Expires 或者 Cache-Control 设置了 max-age 响应头的时候，
 
-         浏览器不会向服务器发起校验请求，而是直接复用本地缓存。
 
-         如果此时服务器进行了资源的更新，用户就无法获取到最新的资源，
-         只能通过强制刷新浏览器缓存来跟服务器请求最新的资源
+    实际应用场景
+
+        频繁改动：cache-control：no-cache。(配合etag + last-modified)
+
+        不常改动：cache-control：max-age=34536000 一年。(类似jq，webpack打包后会重新生成hash，旧的缓存就不用了，而使用新的缓存)
+
+
+    缓存位置
+
+        service worker
+
+            自由控制缓存哪些文件，如何匹配缓存、如何读取缓存
+
+            并且缓存是持续性的
+
+
+        memory cache
+            
+            读取速度快。持续性短
+
+            窗口未关闭时
+
+
+        disk cache
+
+            读取速度慢
+
+            比memory cache 容量大 存储时间长
+
+
+        push cache
+
+            只在会话 session中存在
+
+            会话结束后被释放，缓存时间也短
+
+
+    用户行为的影响
+
+        地址栏输入url： 先disk cache 是否匹配。 没有匹配发起请求
+
+        普通刷新(f5)： 优先使用memory-cache，其次才disk-cache
+
+        强制刷新(ctrl+f5)：浏览器不使用任何缓存
+
+
 
 
 
 
 三、知识点
 
-    1、状态码
-
-        第一次访问网站，全部网络传输
-        浏览器未关闭，重新打开站点，200，会优先从内存中读数据
-        浏览器已关闭，打开站点，200，会优先从硬盘读取数据
-
-        304状态和服务器有过http请求后，服务器告诉浏览器，资源未过期，可以继续使用缓存资源
-
-
-    2、cdn过程
+    1、cdn过程
 
         访问 a.cdn.com
         检查资源缓存配置，200 cache(内存、硬盘)
@@ -132,13 +180,13 @@
         没资源：去源服务器去拉取，这个过程叫 回源
 
 
-    3、浏览器缓存优先级
-        Cache-Control 中有 max-age
-        Expires (因为max-age 会被忽略)
-        Etag  
-            (Cache-Control: no-cache)  
-            等max-age 或 expries 过期后，再进行Etag验证
-<!-- https://www.jianshu.com/p/baf12d367fe7 -->
+<!-- 
+    https://www.jianshu.com/p/baf12d367fe7 
+    
+    配图
+
+    https://camo.githubusercontent.com/4e1a2fff1565062e3c71363f91dd1fba6a5e0d8b/68747470733a2f2f757365722d676f6c642d63646e2e786974752e696f2f323031392f312f352f313638316332316530343535326637373f773d3232313326683d39343826663d706e6726733d333131313733
+-->
 
 
 
