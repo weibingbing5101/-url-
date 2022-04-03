@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  .item-3 {
+    background-color: burlywood;
+  }
+
+  .item-4 {
+    background-color: cornflowerblue;
+  }
+
+  .item-5 {
+    background-color: darkgoldenrod;
+  }
+
+  .item-6 {
+    background-color: darkseagreen;
+  }
+
+  .item-7 {
+    background-color: deepskyblue;
+  }
+
+  .item-8 {
+    background-color: gold;
+  }
+
+  .item-9 {
+    background-color: lightblue;
+  }
+
+  .item-10 {
+    background-color: lightcoral;
+  }
+
+  .main {
+    width: 600px;
+    height: 600px;
+    display: grid;
+    border: 10px solid black;
+
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+
+    gap: 10px;
+
+    /* 考察点，注释   下面两行  任意一行 */
+    grid-auto-flow: row dense;
+    /* grid-auto-flow: row; */
+    /* grid-auto-flow: 这个属性是个排列方式 横向，纵向 */
+  }
+
+  /* 从左数，第1个 | 就是网格线1，依次 2 3 4 网格线
+     grid-column: 1/3， 就是从第1个网格线开始，到第3个网格线。故占用2个格子宽
+        | A | B | C |
+        | D | E | F |
+        | G | H | I |
+   */
+
+  .item-1 {
+    /* 3 - 1站2份宽 ，这里的1 3和网格线有关系*/
+    grid-column: 1/3;
+    background-color: blueviolet;
+  }
+
+  .item-2 {
+    /* 3 - 1站2份宽 */
+    grid-column: 1/3;
+    background-color: brown;
+  }
+
+  .item {
+    font-size: 50px;
+    text-align: center;
+    display: inline-block;
+  }
+</style>
+
+<body>
+  <div class="main">
+    <div class="item item-1">1</div>
+    <div class="item item-2">2</div>
+    <div class="item item-3">3</div>
+    <div class="item item-4">4</div>
+    <div class="item item-5">5</div>
+    <div class="item item-6">6</div>
+    <div class="item item-7">7</div>
+    <div class="item item-8">8</div>
+    <div class="item item-9">9</div>
+    <div class="item item-10">10</div>
+  </div>
+</body>
+
+</html>

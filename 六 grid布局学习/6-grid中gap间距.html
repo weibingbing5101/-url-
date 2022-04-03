@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<style>
+  .item-1 {
+    background-color: blueviolet;
+  }
+
+  .item-2 {
+    background-color: brown;
+  }
+
+  .item-3 {
+    background-color: burlywood;
+  }
+
+  .item-4 {
+    background-color: cornflowerblue;
+  }
+
+  .item-5 {
+    background-color: darkgoldenrod;
+  }
+
+  .item-6 {
+    background-color: darkseagreen;
+  }
+
+  .item-7 {
+    background-color: deepskyblue;
+  }
+
+  .item-8 {
+    background-color: gold;
+  }
+
+  .item-9 {
+    background-color: lightblue;
+  }
+
+  .item-10 {
+    background-color: lightcoral;
+  }
+
+  .main {
+    width: 600px;
+    height: 600px;
+    display: grid;
+    border: 10px solid black;
+
+    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
+
+    column-gap: 10px;
+    /* 
+      这个属性只，1与2，2与3，3与4，中间有10px的间距。
+      1 2 3 4总宽为：142.5 * 4 = 570px；再加上中间3个gap的10px，刚好600px
+     */
+  }
+
+  .item {
+    font-size: 50px;
+    text-align: center;
+    display: inline-block;
+  }
+</style>
+
+<body>
+  <div class="main">
+    <div class="item item-1">1</div>
+    <div class="item item-2">2</div>
+    <div class="item item-3">3</div>
+    <div class="item item-4">4</div>
+    <div class="item item-5">5</div>
+    <div class="item item-6">6</div>
+    <div class="item item-7">7</div>
+    <div class="item item-8">8</div>
+    <div class="item item-9">9</div>
+    <div class="item item-10">10</div>
+  </div>
+</body>
+
+</html>
